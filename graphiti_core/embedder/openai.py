@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import os
 from collections.abc import Iterable
 
 from openai import AsyncAzureOpenAI, AsyncOpenAI
@@ -21,7 +22,7 @@ from openai.types import EmbeddingModel
 
 from .client import EmbedderClient, EmbedderConfig
 
-DEFAULT_EMBEDDING_MODEL = 'text-embedding-3-small'
+DEFAULT_EMBEDDING_MODEL = os.environ.get('DEFAULT_EMBEDDING_MODEL','text-embedding-3-small')
 
 
 class OpenAIEmbedderConfig(EmbedderConfig):

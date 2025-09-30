@@ -1,0 +1,5 @@
+change list
+- graphiti_core/llm_client/openai_base_client.py
+- graphiti_core/embedder/openai.py
+- server/graph_service/config.py
+- server/graph_service/zep_graphiti.py

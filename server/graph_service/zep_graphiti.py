@@ -10,13 +10,14 @@ from graphiti_core.nodes import EntityNode, EpisodicNode  # type: ignore
 
 from graph_service.config import ZepEnvDep
 from graph_service.dto import FactResult
+from graphiti_core.embedder import EmbedderClient, OpenAIEmbedderConfig, OpenAIEmbedder
 
 logger = logging.getLogger(__name__)
 
 
 class ZepGraphiti(Graphiti):
-    def __init__(self, uri: str, user: str, password: str, llm_client: LLMClient | None = None):
-        super().__init__(uri, user, password, llm_client)
+    def __init__(self, uri: str, user: str, password: str, llm_client: LLMClient | None = None, embedder: EmbedderClient | None = None):
+        super().__init__(uri, user, password, llm_client, embedder)
 
     async def save_entity_node(self, name: str, uuid: str, group_id: str, summary: str = ''):
         new_node = EntityNode(
@@ -83,7 +84,13 @@ async def get_graphiti(settings: ZepEnvDep):
         client.llm_client.config.api_key = settings.openai_api_key
     if settings.model_name is not None:
         client.llm_client.model = settings.model_name
-
+    if settings.small_model_name is not None:
+        client.llm_client.small_model = settings.small_model_name
+    if settings.embedding_model_name is not None:
+        if isinstance(client.embedder, OpenAIEmbedder):
+            client.embedder.config.embedding_model = settings.embedding_model_name
+        
+    print("get_graphiti: embedder",client.embedder.__dict__)
     try:
         yield client
     finally:
@@ -91,6 +98,7 @@ async def get_graphiti(settings: ZepEnvDep):
 
 
 async def initialize_graphiti(settings: ZepEnvDep):
+    print("initialize_graphiti: settings:",settings)
     client = ZepGraphiti(
         uri=settings.neo4j_uri,
         user=settings.neo4j_user,

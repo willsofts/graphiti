@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import os
 import json
 import logging
 import typing
@@ -31,10 +32,10 @@ from .errors import RateLimitError, RefusalError
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL = 'gpt-5-mini'
-DEFAULT_SMALL_MODEL = 'gpt-5-nano'
-DEFAULT_REASONING = 'minimal'
-DEFAULT_VERBOSITY = 'low'
+DEFAULT_MODEL = os.environ.get('DEFAULT_MODEL','gpt-5-mini')
+DEFAULT_SMALL_MODEL = os.environ.get('DEFAULT_SMALL_MODEL','gpt-5-nano')
+DEFAULT_REASONING = os.environ.get('DEFAULT_REASONING','minimal')
+DEFAULT_VERBOSITY = os.environ.get('DEFAULT_VERBOSITY','low')
 
 
 class BaseOpenAIClient(LLMClient):
@@ -108,6 +109,9 @@ class BaseOpenAIClient(LLMClient):
 
     def _get_model_for_size(self, model_size: ModelSize) -> str:
         """Get the appropriate model name based on the requested size."""
+        print("---------------------------------------")
+        print(self.model or DEFAULT_MODEL)
+        print("--------------------------------------")
         if model_size == ModelSize.small:
             return self.small_model or DEFAULT_SMALL_MODEL
         else:
